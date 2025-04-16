@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ana Sayfa</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Tüm Üyelik Paketleri</h2>
+
+    <!-- Filtre Formu -->
+    <form method="get" action="/" class="mb-4">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+            <select name="type" class="form-select">
+                <option value="" th:selected="${selectedType == null}">Tüm Türler</option>
+                <option th:each="t : ${types}"
+                        th:value="${t}"
+                        th:text="${t.displayName}"
+                        th:selected="${t.name() == selectedType}">
+                </option>
+            </select>
+        </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" type="submit">Filtrele</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Kart Stili -->
+    <style>
+        .membership-card {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .membership-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+    </style>
+
+    <!-- 🧾 Üyelik Listesi -->
+    <div class="row mt-3" th:if="${memberships.size() > 0}">
+        <div class="col-md-4 mb-4" th:each="membership : ${memberships}">
+            <div class="card membership-card h-100">
+                <img th:src="@{'/membership/image/' + ${membership.id}}" class="card-img-top" style="height:200px; object-fit:cover;">
+                <div class="card-body">
+                    <h5 th:text="${membership.title}"></h5>
+                    <p th:text="${membership.description}"></p>
+                    <p><strong th:text="${membership.price} + ' ₺'"></strong></p>
+                    <a th:href="@{'/membership/details/' + ${membership.id}}" class="btn btn-success w-100">Detayları Gör</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${memberships.size() == 0}" class="text-center mt-5">
+        <p class="text-muted">Seçilen kritere uygun üyelik bulunamadı.</p>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

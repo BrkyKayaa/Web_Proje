@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Düzenle</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">👤 Profil Bilgilerini Güncelle</h2>
+
+    <form th:action="@{/profile/edit}" th:object="${userUpdateDto}" method="post" enctype="multipart/form-data" class="shadow p-4 rounded bg-light">
+        <div class="mb-3">
+            <label>Kullanıcı Adı</label>
+            <input type="text" th:field="*{username}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" th:field="*{email}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Yeni Profil Fotoğrafı (Opsiyonel)</label>
+            <input type="file" th:field="*{profilePicture}" class="form-control" accept="image/*">
+            <small class="text-muted">Yüklemezsen mevcut resmin kalır.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Kaydet</button>
+    </form>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Paneli</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🔧 Yönetim Paneli</h2>
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-4">
+                <h5>Üyelikleri Yönet</h5>
+                <a th:href="@{/admin/membership/list}" class="btn btn-outline-primary mt-2">Git</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-4">
+                <h5>Kullanıcıları Gör</h5>
+                <a th:href="@{/admin/user/list}" class="btn btn-outline-info mt-2">Git</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-4">
+                <h5>Yeni Üyelik Ekle</h5>
+                <a th:href="@{/admin/membership/add}" class="btn btn-outline-success mt-2">Git</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

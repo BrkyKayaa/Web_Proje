@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Üyelik Düzenleme</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+<div class="container mt-5">
+    <h3>Üyelik Güncelle</h3>
+    <form th:action="@{'/admin/membership/edit/' + ${membership.id}}" method="post" enctype="multipart/form-data" class="shadow p-4 rounded bg-light">
+        <div class="mb-3">
+            <label>Başlık</label>
+            <input type="text" name="title" th:value="${membership.title}" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label>Açıklama</label>
+            <textarea name="description" class="form-control" th:text="${membership.description}"></textarea>
+        </div>
+        <div class="mb-3">
+            <label>Fiyat</label>
+            <input type="number" name="price" th:value="${membership.price}" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label>Süre</label>
+            <input type="number" name="durationInDays" th:value="${membership.durationInDays}" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label>Tür</label>
+            <select name="type" class="form-select">
+                <option th:each="t : ${types}"
+                        th:value="${t}"
+                        th:selected="${membership.type == t}"
+                        th:text="${t.displayName}">Tür</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Yeni Resim (Opsiyonel)</label>
+            <input type="file" name="imageFile" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Güncelle</button>
+    </form>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

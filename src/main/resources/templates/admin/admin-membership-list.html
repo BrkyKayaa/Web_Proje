@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Üyelikler</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+<div class="container mt-5">
+    <h3 class="mb-4">Tüm Üyelikler</h3>
+    <a th:href="@{/admin/membership/add}" class="btn btn-success mb-3">+ Yeni Üyelik Ekle</a>
+
+    <table class="table table-bordered table-hover shadow">
+        <thead class="table-dark text-center">
+        <tr>
+            <th>#</th>
+            <th>Başlık</th>
+            <th>Tür</th>
+            <th>Fiyat</th>
+            <th>Süre</th>
+            <th>İşlem</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m, i : ${memberships}">
+            <td th:text="${i.count}"></td>
+            <td th:text="${m.title}"></td>
+            <td th:text="${m.type.displayName}"></td>
+            <td th:text="${m.price} + ' ₺'"></td>
+            <td th:text="${m.durationInDays} + ' gün'"></td>
+            <td>
+                <a th:href="@{'/admin/membership/edit/' + ${m.id}}" class="btn btn-sm btn-primary">Düzenle</a>
+                <a th:href="@{'/admin/membership/delete/' + ${m.id}}" class="btn btn-sm btn-danger">Sil</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

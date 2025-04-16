@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Kullanıcı Listesi</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+<div class="container mt-5">
+    <h3>Kullanıcı Listesi</h3>
+
+    <form method="get" action="/admin/user/list" class="mb-3 row">
+        <div class="col-md-4">
+            <select name="type" class="form-select">
+                <option value="" selected>Tüm Üyelik Türleri</option>
+                <option th:each="t : ${types}" th:value="${t}" th:selected="${t.name() == selectedType}" th:text="${t.displayName}"></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-secondary w-100">Filtrele</button>
+        </div>
+    </form>
+
+    <table class="table table-striped shadow">
+        <thead class="table-dark text-center">
+        <tr>
+            <th>#</th>
+            <th>Kullanıcı Adı</th>
+            <th>Email</th>
+            <th>Üyelik Türü</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user, i : ${users}">
+            <td th:text="${i.count}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.email}"></td>
+            <td>
+                <span th:if="${#lists.isEmpty(user.subscriptions)}" class="text-muted">Üyelik Yok</span>
+                <span th:unless="${#lists.isEmpty(user.subscriptions)}">
+                    <span th:each="sub, iterStat : ${user.subscriptions}">
+                        <span th:text="${sub.membership.type.displayName}"></span>
+                        <span th:if="${!iterStat.last}">, </span>
+                    </span>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

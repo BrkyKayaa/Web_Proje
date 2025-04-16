@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Profil</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+<div th:if="${param.purchaseSuccess}" class="alert alert-success">
+    Üyelik başarıyla satın alındı!
+</div>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">👤 Profil Sayfası</h2>
+
+    <div class="mb-4 d-flex align-items-center">
+        <img th:src="@{/profile/picture}" class="rounded-circle me-3 border border-secondary shadow-sm" width="150" height="150"
+             alt="Profil Resmi" onerror="this.src='/images/default-avatar.png'">
+        <div>
+            <h4 th:text="${user.username}"></h4>
+            <p class="mb-0"><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+            <p class="mb-0"><strong>Rol:</strong> <span th:text="${user.role}"></span></p>
+        </div>
+    </div>
+
+    <div sec:authorize="hasRole('USER')">
+        <h5>📋 Satın Aldığın Üyelikler</h5>
+        <div th:if="${subscriptions.size() > 0}">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                <tr>
+                    <th>Başlık</th>
+                    <th>Tür</th>
+                    <th>Başlangıç</th>
+                    <th>Bitiş</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="sub : ${subscriptions}">
+                    <td th:text="${sub.membership.title}"></td>
+                    <td th:text="${sub.membership.type}"></td>
+                    <td th:text="${sub.startDate}"></td>
+                    <td th:text="${sub.endDate}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${subscriptions.size() == 0}">
+            <p class="text-muted">Henüz hiçbir üyelik satın almadınız.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

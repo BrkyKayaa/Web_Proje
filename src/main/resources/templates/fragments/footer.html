@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="footer">
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <small>&copy; 2025 FitnesApp - Tüm hakları saklıdır.</small>
+        </div>
+    </footer>
+
+    <!-- Script Dosyaları -->
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script> <!-- Eğer özel JS'in varsa -->
+</div>
+
+</body>
+</html>

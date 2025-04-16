@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kayıt Ol</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .register-card {
+            max-width: 500px;
+            margin: auto;
+            margin-top: 60px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(25,135,84,.25);
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-card">
+    <h3 class="text-center mb-4">📝 Kayıt Ol</h3>
+
+    <form th:action="@{/auth/register}" th:object="${userDto}" method="post" enctype="multipart/form-data">
+        <!-- Kullanıcı Adı -->
+        <div class="mb-3">
+            <label>👤 Kullanıcı Adı</label>
+            <input type="text" th:field="*{username}" class="form-control" placeholder="kullanıcı adı">
+            <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+        </div>
+
+        <!-- E-posta -->
+        <div class="mb-3">
+            <label>📧 E-posta</label>
+            <input type="email" th:field="*{email}" class="form-control" placeholder="e-posta adresi">
+            <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+        </div>
+
+        <!-- Şifre -->
+        <div class="mb-3">
+            <label>🔒 Şifre</label>
+            <input type="password" th:field="*{password}" class="form-control" placeholder="şifre">
+            <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+        </div>
+
+        <!-- Şifre Tekrar -->
+        <div class="mb-3">
+            <label>🔁 Şifre Tekrar</label>
+            <input type="password" th:field="*{confirmPassword}" class="form-control" placeholder="şifreyi tekrar girin">
+            <div class="text-danger" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+        </div>
+
+        <!-- Profil Resmi -->
+        <div class="mb-3">
+            <label>🖼 Profil Resmi</label>
+            <input type="file" th:field="*{profilePicture}" class="form-control" accept="image/*" onchange="validateFile(this)">
+            <small class="text-muted">En fazla 5MB olmalı.</small>
+        </div>
+
+        <!-- Kayıt Butonu -->
+        <button type="submit" class="btn btn-success w-100">✔️ Kayıt Ol</button>
+    </form>
+
+    <div class="text-center mt-3">
+        <a th:href="@{/auth/login}">Zaten hesabınız var mı? <strong>Giriş yap</strong></a>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Resim Boyutu Kontrolü -->
+<script>
+    function validateFile(input) {
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        const file = input.files[0];
+
+        if (file && file.size > maxSize) {
+            alert("⚠️ Profil resmi 5MB'dan büyük olamaz!");
+            input.value = "";
+        }
+    }
+</script>
+
+</body>
+</html>
