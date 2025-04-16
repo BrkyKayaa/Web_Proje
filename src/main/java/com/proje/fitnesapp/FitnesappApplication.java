@@ -8,6 +8,7 @@ public class FitnesappApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FitnesappApplication.class, args);
+		System.out.println("Hello Salih!");
 	}
 
 }
