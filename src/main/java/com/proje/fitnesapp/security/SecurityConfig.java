@@ -27,7 +27,8 @@ public class SecurityConfig {
                         .hasAnyRole("USER", "ADMIN")
 
                         // Üyelik satın alma gibi işlemler sadece USER'a açık
-                        .requestMatchers("/membership/**").hasRole("USER")
+                        .requestMatchers("/membership/**").hasAnyRole("USER", "ADMIN")
+
 
                         // Diğer tüm istekler sadece giriş yapmış kullanıcılara açık
                         .anyRequest().authenticated()

@@ -10,10 +10,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Yeni bir üyelik oluşturmak veya güncellemek için kullanılan DTO sınıfı.
+ */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class MembershipDto {
+
     @NotBlank(message = "Başlık boş olamaz")
     private String title;
 
@@ -28,55 +32,8 @@ public class MembershipDto {
     @Min(value = 1, message = "Süre en az 1 gün olmalı")
     private Integer durationInDays;
 
+    @NotNull(message = "Üyelik tipi boş olamaz")
     private MembershipType type;
 
-    private MultipartFile imageFile; // üyelik görseli dosya olarak alınacak
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getDurationInDays() {
-        return durationInDays;
-    }
-
-    public void setDurationInDays(Integer durationInDays) {
-        this.durationInDays = durationInDays;
-    }
-
-    public MembershipType getType() {
-        return type;
-    }
-
-    public void setType(MembershipType type) {
-        this.type = type;
-    }
-
-    public MultipartFile getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(MultipartFile imageFile) {
-        this.imageFile = imageFile;
-    }
+    private MultipartFile imageFile;
 }

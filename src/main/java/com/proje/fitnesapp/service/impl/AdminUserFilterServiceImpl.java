@@ -1,40 +1,46 @@
 package com.proje.fitnesapp.service.impl;
 
 import com.proje.fitnesapp.model.MembershipType;
-import com.proje.fitnesapp.model.Subscription;
 import com.proje.fitnesapp.model.User;
 import com.proje.fitnesapp.repository.SubscriptionRepository;
 import com.proje.fitnesapp.repository.UserRepository;
 import com.proje.fitnesapp.service.AdminUserFilterService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
+/**
+ * Admin paneli için kullanıcı filtreleme işlemlerini gerçekleştiren servis sınıfıdır.
+ * Üyelik türüne göre kullanıcıları listeleme gibi işlemleri içerir.
+ */
 @Service
+@RequiredArgsConstructor
 public class AdminUserFilterServiceImpl implements AdminUserFilterService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
-
+    /**
+     * Sistemde kayıtlı olan tüm kullanıcıları getirir.
+     *
+     * @return Tüm kullanıcıların listesi.
+     */
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * Belirli bir üyelik türüne sahip olan kullanıcıları getirir.
+     * Aynı kullanıcı birden fazla üyeliğe sahipse sadece bir kez döner.
+     * İşlem veritabanı seviyesinde gerçekleştirilir.
+     *
+     * @param type Filtrelenecek üyelik türü.
+     * @return Bu üyelik türüne sahip kullanıcıların listesi.
+     */
     @Override
     public List<User> getUsersByMembershipType(MembershipType type) {
-        List<Subscription> subscriptions = subscriptionRepository.findAll();
-
-        // Aynı kullanıcının birden fazla üyeliği varsa tekrar etmesin
-        return subscriptions.stream()
-                .filter(sub -> sub.getMembership().getType() == type)
-                .map(Subscription::getUser)
-                .distinct()
-                .collect(Collectors.toList());
+        return subscriptionRepository.findDistinctUsersByMembershipType(type);
     }
 }

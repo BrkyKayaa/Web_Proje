@@ -7,90 +7,122 @@ import com.proje.fitnesapp.model.Role;
 import com.proje.fitnesapp.model.User;
 import com.proje.fitnesapp.repository.UserRepository;
 import com.proje.fitnesapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * Kullanıcı kayıt, güncelleme ve parola işlemlerini yöneten servis katmanıdır.
+ */
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
+    /**
+     * Yeni kullanıcı kaydı oluşturur.
+     *
+     * @param dto kullanıcı kayıt bilgileri
+     * @throws IOException görsel yükleme sırasında hata oluşursa
+     */
     @Override
     public void register(UserRegisterDto dto) throws IOException {
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole(Role.USER);
-
-        // FOTOĞRAF YÜKLEME BLOĞU
-        MultipartFile file = dto.getProfilePicture();
-        if (file != null && !file.isEmpty()) {
-            System.out.println("📷 Gelen dosya: " + file.getOriginalFilename());
-
-            byte[] bytes = file.getBytes();
-            Byte[] byteObjects = new Byte[bytes.length];
-            for (int i = 0; i < bytes.length; i++) {
-                byteObjects[i] = bytes[i];
-            }
-            user.setProfilePicture(byteObjects);
-        } else {
-            System.out.println("❌ Kullanıcı fotoğraf yüklemedi veya dosya null.");
-        }
+        User user = User.builder()
+                .username(dto.getUsername())
+                .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .role(Role.USER)
+                .profilePicture(convertToBytes(dto.getProfilePicture()))
+                .build();
 
         userRepository.save(user);
     }
 
+    /**
+     * E-posta adresine göre kullanıcıyı döner.
+     *
+     * @param email kullanıcı e-posta
+     * @return bulunan kullanıcı veya null
+     */
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
 
+    /**
+     * ID'ye göre kullanıcıyı getirir.
+     *
+     * @param id kullanıcı ID'si
+     * @return bulunan kullanıcı veya null
+     */
     @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Kullanıcının profil bilgilerini günceller.
+     *
+     * @param email e-posta adresi
+     * @param dto   yeni kullanıcı bilgileri
+     * @throws IOException görsel yüklenemediğinde
+     */
     @Override
     public void updateProfile(String email, UserUpdateDto dto) throws IOException {
-        User user = userRepository.findByEmail(email).orElseThrow();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Kullanıcı bulunamadı: " + email));
 
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
 
-        MultipartFile file = dto.getProfilePicture();
-        if (file != null && !file.isEmpty()) {
-            byte[] bytes = file.getBytes();
-            Byte[] byteObjects = new Byte[bytes.length];
-            for (int i = 0; i < bytes.length; i++) byteObjects[i] = bytes[i];
-            user.setProfilePicture(byteObjects);
+        if (dto.getProfilePicture() != null && !dto.getProfilePicture().isEmpty()) {
+            user.setProfilePicture(convertToBytes(dto.getProfilePicture()));
         }
 
         userRepository.save(user);
     }
 
+    /**
+     * Kullanıcının şifresini değiştirir.
+     *
+     * @param email kullanıcının e-postası
+     * @param dto   parola değiştirme bilgileri
+     * @return işlem başarılıysa true, aksi halde false
+     */
     @Override
     public boolean changePassword(String email, PasswordChangeDto dto) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı."));
+                .orElseThrow(() -> new IllegalArgumentException("Kullanıcı bulunamadı: " + email));
+
         if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             return false;
         }
+
         if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
             return false;
         }
+
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         userRepository.save(user);
         return true;
     }
 
+    /**
+     * MultipartFile nesnesini byte dizisine dönüştürür.
+     *
+     * @param file resim dosyası
+     * @return byte[] formatında dosya
+     * @throws IOException dönüşüm sırasında hata oluşursa
+     */
+    private byte[] convertToBytes(MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            return file.getBytes();
+        }
+        return null;
+    }
 }
-

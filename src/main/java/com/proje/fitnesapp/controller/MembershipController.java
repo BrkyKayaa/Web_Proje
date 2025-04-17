@@ -4,7 +4,8 @@ import com.proje.fitnesapp.dto.MembershipDto;
 import com.proje.fitnesapp.model.Membership;
 import com.proje.fitnesapp.model.MembershipType;
 import com.proje.fitnesapp.service.MembershipService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +14,20 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Admin tarafından üyelik paketlerini yönetmek için kullanılan controller sınıfı.
+ */
 @Controller
 @RequestMapping("/admin/membership")
+@RequiredArgsConstructor
 public class MembershipController {
 
-    @Autowired
-    private MembershipService membershipService;
+    private final MembershipService membershipService;
 
-    // Listele
+    /**
+     * Üyelik listesi sayfası.
+     * Opsiyonel olarak MembershipType ile filtreleme yapılabilir.
+     */
     @GetMapping("/list")
     public String listMemberships(@RequestParam(value = "type", required = false) String typeParam, Model model) {
         List<Membership> memberships;
@@ -41,11 +48,12 @@ public class MembershipController {
 
         model.addAttribute("memberships", memberships);
         model.addAttribute("types", MembershipType.values());
-
         return "admin/admin-membership-list";
     }
 
-    // Ekleme formu
+    /**
+     * Yeni üyelik ekleme formu.
+     */
     @GetMapping("/add")
     public String showAddForm(Model model) {
         model.addAttribute("membershipDto", new MembershipDto());
@@ -53,23 +61,33 @@ public class MembershipController {
         return "admin/admin-membership-add";
     }
 
-    // Ekleme işlemi
+    /**
+     * Yeni üyelik ekleme işlemi.
+     */
     @PostMapping("/add")
-    public String addMembership(@ModelAttribute MembershipDto dto) throws IOException {
+    public String addMembership(@Valid @ModelAttribute("membershipDto") MembershipDto dto) throws IOException {
         membershipService.create(dto);
         return "redirect:/admin/membership/list";
     }
 
-    // Güncelleme formu
+    /**
+     * Üyelik güncelleme formu.
+     */
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Membership membership = membershipService.getById(id);
+        if (membership == null) {
+            return "redirect:/admin/membership/list";
+        }
+
         model.addAttribute("membership", membership);
         model.addAttribute("types", MembershipType.values());
         return "admin/admin-membership-edit";
     }
 
-    // Güncelleme işlemi
+    /**
+     * Üyelik güncelleme işlemi.
+     */
     @PostMapping("/edit/{id}")
     public String editMembership(@PathVariable Long id,
                                  @RequestParam String title,
@@ -83,7 +101,9 @@ public class MembershipController {
         return "redirect:/admin/membership/list";
     }
 
-    // Silme işlemi
+    /**
+     * Üyelik silme işlemi.
+     */
     @GetMapping("/delete/{id}")
     public String deleteMembership(@PathVariable Long id) {
         membershipService.delete(id);

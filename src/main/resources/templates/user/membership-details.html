@@ -27,9 +27,11 @@
                     <p><strong>Üyelik Türü:</strong> <span th:text="${membership.type.displayName}"></span></p>
 
                     <!-- Satın Alma Formu -->
-                    <form th:action="@{'/membership/purchase/' + ${membership.id}}" method="post">
-                        <button type="submit" class="btn btn-success w-100 mt-3">✅ Satın Al</button>
-                    </form>
+                    <div sec:authorize="hasRole('USER')">
+                        <form th:action="@{'/membership/purchase/' + ${membership.id}}" method="post">
+                            <button type="submit" class="btn btn-success w-100 mt-3">✅ Satın Al</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,92 +1,45 @@
 package com.proje.fitnesapp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
+@Table(name = "membership")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Membership {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
- private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
- private String title;
- private String description;
- private Double price;
- private Integer durationInDays; // örn: 30 gün
+    @NotBlank
+    private String title;
 
- @Lob
- private Byte[] image;
+    @Lob
+    private String description;
 
- @Enumerated(EnumType.STRING)
- private MembershipType type;
+    @Column(nullable = false)
+    private Double price;
 
- @OneToMany(mappedBy = "membership", cascade = CascadeType.ALL)
- private List<Subscription> subscriptions = new ArrayList<>();
+    private Integer durationInDays;
 
-    public Long getId() {
-        return id;
-    }
+    @Lob
+    private byte[] image;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MembershipType type;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getDurationInDays() {
-        return durationInDays;
-    }
-
-    public void setDurationInDays(Integer durationInDays) {
-        this.durationInDays = durationInDays;
-    }
-
-    public Byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(Byte[] image) {
-        this.image = image;
-    }
-
-    public MembershipType getType() {
-        return type;
-    }
-
-    public void setType(MembershipType type) {
-        this.type = type;
-    }
-
-    public List<Subscription> getSubscriptions() {
-        return subscriptions;
-    }
-
-    public void setSubscriptions(List<Subscription> subscriptions) {
-        this.subscriptions = subscriptions;
-    }
+    @OneToMany(mappedBy = "membership", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Subscription> subscriptions;
 }
