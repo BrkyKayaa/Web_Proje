@@ -9,6 +9,12 @@
 <body class="d-flex flex-column min-vh-100">
 <section>
     <div class="login-box">
+
+        <!-- ✅ Bilgilendirme mesajı -->
+        <div th:if="${param.error}" class="alert alert-danger">
+            Hatalı kullanıcı adı veya şifre girdiniz!
+        </div>
+
         <form th:action="@{/auth/login}" method="post">
             <h2>Giriş Yap!</h2>
             <div class="input-box">

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,7 +66,12 @@ public class MembershipController {
      * Yeni üyelik ekleme işlemi.
      */
     @PostMapping("/add")
-    public String addMembership(@Valid @ModelAttribute("membershipDto") MembershipDto dto) throws IOException {
+    public String addMembership(@Valid @ModelAttribute("membershipDto") MembershipDto dto, BindingResult result, Model model) throws IOException {
+        if (result.hasErrors()) {                                // ② kontrol et
+            model.addAttribute("types", MembershipType.values()); // formda select kutusu lazımdı
+            return "admin/admin-membership-add";                 // ③ hatayla forma geri dön
+        }
+
         membershipService.create(dto);
         return "redirect:/admin/membership/list";
     }

@@ -2,44 +2,81 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${pageTitle}">Üyelikler</title>
+    <title>Admin Üyelik Yönetimi</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class = "d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div th:replace="~{fragments/scripts :: scripts}"></div>
-<div class="container mt-5 flex-grow-1">
-    <h3 class="mb-4">Tüm Üyelikler</h3>
-    <a th:href="@{/admin/membership/add}" class="btn btn-success mb-3">+ Yeni Üyelik Ekle</a>
 
-    <table class="table table-bordered table-hover shadow">
-        <thead class="table-dark text-center">
-        <tr>
-            <th>#</th>
-            <th>Başlık</th>
-            <th>Tür</th>
-            <th>Fiyat</th>
-            <th>Süre</th>
-            <th>İşlem</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="m, i : ${memberships}">
-            <td th:text="${i.count}"></td>
-            <td th:text="${m.title}"></td>
-            <td th:text="${m.type.displayName}"></td>
-            <td th:text="${m.price} + ' ₺'"></td>
-            <td th:text="${m.durationInDays} + ' gün'"></td>
-            <td>
-                <a th:href="@{'/admin/membership/edit/' + ${m.id}}" class="btn btn-sm btn-primary">Düzenle</a>
-                <a th:href="@{'/admin/membership/delete/' + ${m.id}}" class="btn btn-sm btn-danger">Sil</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="container mt-5 flex-grow-1">
+    <h2 class="text-center mb-4">Üyelikleri Yönet</h2>
+    <a th:href="@{/admin/membership/add}" class="btn btn-success mb-4">+ Yeni Üyelik Ekle</a>
+
+    <!-- Filtre Formu -->
+    <form method="get" action="/admin/membership/list" class="mb-4">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <select name="type" class="form-select">
+                    <option value="" th:selected="${selectedType == null}">Tüm Türler</option>
+                    <option th:each="t : ${types}"
+                            th:value="${t}"
+                            th:text="${t.displayName}"
+                            th:selected="${t.name() == selectedType}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">Filtrele</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Kart Stil -->
+    <style>
+        .membership-card {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .membership-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+    </style>
+
+    <!-- 🧾 Kartlar -->
+    <div class="row" th:if="${memberships.size() > 0}">
+        <div class="col-md-4 mb-4" th:each="m : ${memberships}">
+            <div class="card membership-card h-100">
+                <img th:src="@{'/membership/image/' + ${m.id}}" class="card-img-top" style="height:200px; object-fit:cover;">
+                <div class="card-body">
+                    <h5 th:text="${m.title}" class="card-title"></h5>
+                    <p th:text="${m.description}" class="card-text"></p>
+                    <p><strong>Tür:</strong> <span th:text="${m.type.displayName}"></span></p>
+                    <p><strong>Fiyat:</strong> <span th:text="${m.price} + ' ₺'"></span></p>
+                    <p><strong>Süre:</strong> <span th:text="${m.durationInDays} + ' gün'"></span></p>
+
+                    <div class="d-flex justify-content-between mt-3">
+                        <a th:href="@{'/admin/membership/edit/' + ${m.id}}" class="btn btn-sm btn-primary w-50 me-2">Düzenle</a>
+                        <a th:href="@{'/admin/membership/delete/' + ${m.id}}"
+                           class="btn btn-sm btn-danger w-50"
+                           onclick="return confirm('Bu üyeliği silmek istediğinizden emin misiniz?')">
+                            Sil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${memberships.size() == 0}" class="text-center mt-5">
+        <p class="text-muted">Gösterilecek üyelik bulunamadı.</p>
+    </div>
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
